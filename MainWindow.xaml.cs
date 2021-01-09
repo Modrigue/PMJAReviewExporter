@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Windows.Forms;
-
-using Microsoft.WindowsAPICodePack.Taskbar;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace PMJAReviewExporter
 {
-    public partial class FormMain : Form
+    /// <summary>
+    /// Logique d'interaction pour MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
         public static event EventHandler OnProcessReviewerName;
         public static event EventHandler OnProcessReviewParams;
@@ -23,8 +24,9 @@ namespace PMJAReviewExporter
         Thread threadExport_;
         private bool isProcessing_;
 
-        private TaskbarManager taskbarManager_;
-        private float taskbarManagerValue_;
+        // deprecated
+        //private TaskbarManager taskbarManager_;
+        //private float taskbarManagerValue_;
 
         private string site_;
         private string urlSite_;
@@ -35,11 +37,9 @@ namespace PMJAReviewExporter
         private delegate void incrementProgressBar(float value);
         private delegate void incrementProgressTaskBar(float value);
 
-        public FormMain()
+        public MainWindow()
         {
             InitializeComponent();
-
-            labelVersion.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             OnProcessReviewerName += FormMain_OnProcessReviewerName;
             OnProcessReviewParams += FormMain_OnProcessReviewParams;
@@ -48,13 +48,15 @@ namespace PMJAReviewExporter
             nbReviewsRatingsProcessed_ = 0;
             isProcessing_ = false;
 
-            taskbarManager_ = TaskbarManager.Instance;
-            taskbarManagerValue_ = 0;
+            //taskbarManager_ = TaskbarManager.Instance;
+            //taskbarManagerValue_ = 0;
+
+            labelVersion.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             Tools.Initialize();
         }
 
-        private void FormMain_Load(object sender, EventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // check if required dlls are present
             string execDir = Environment.CurrentDirectory;
@@ -62,7 +64,7 @@ namespace PMJAReviewExporter
             string dllPath = Path.Combine(execDir, dllName);
             if (!File.Exists(dllPath))
             {
-                MessageBox.Show("Library " + dllName + " not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Library " + dllName + " not found", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
             }
 
@@ -85,11 +87,10 @@ namespace PMJAReviewExporter
             comboboxSite.SelectedIndex = 0;
 
             // set focus to text box
-            this.ActiveControl = textboxReviewer;
-            textboxReviewer.Focus();       
+            textboxReviewer.Focus();
         }
 
-        private void buttonExport_Click(object sender, EventArgs e)
+        private void buttonExport_Click(object sender, RoutedEventArgs e)
         {
             // stop process
             if (isProcessing_)
@@ -104,17 +105,17 @@ namespace PMJAReviewExporter
 
             string id = textboxReviewer.Text;
 
-            labelStatus.Visible = true;
-            labelStatus.Text = "Processing reviewer page...";
+            labelStatus.Content = "Processing reviewer page...";
+            labelStatus.Visibility = Visibility.Visible;
 
-            progressBar1.Visible = true;
-            progressBar1.Style = ProgressBarStyle.Continuous;
-            progressBar1.Maximum = 10000;
-            progressBar1.Value = 0;
+            progressbar.Visibility = Visibility.Visible;
+            //progressbar.Style = ProgressBarStyle.Continuous;
+            progressbar.Maximum = 10000;
+            progressbar.Value = 0;
 
-            taskbarManager_.SetProgressState(TaskbarProgressBarState.Normal);
-            taskbarManagerValue_ = 0;
-            taskbarManager_.SetProgressValue(0, 10000);
+            //taskbarManager_.SetProgressState(TaskbarProgressBarState.Normal);
+            //taskbarManagerValue_ = 0;
+            //taskbarManager_.SetProgressValue(0, 10000);
 
             nbReviewsRatingsProcessed_ = 0;
             isProcessing_ = true;
@@ -125,23 +126,23 @@ namespace PMJAReviewExporter
             updateGUI();
 
             while (isProcessing_)
-                Application.DoEvents();
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 
             updateGUI();
 
-            progressBar1.Visible = false;
-            //progressBar1.Maximum = 0;
-            progressBar1.Value = 0;
+            progressbar.Visibility = Visibility.Hidden;
+            progressbar.Maximum = 0;
+            progressbar.Value = 0;
 
-            taskbarManager_.SetProgressState(TaskbarProgressBarState.NoProgress);
-            taskbarManagerValue_ = 0;
-            taskbarManager_.SetProgressValue(0, 10000);
+            //taskbarManager_.SetProgressState(TaskbarProgressBarState.NoProgress);
+            //taskbarManagerValue_ = 0;
+            //taskbarManager_.SetProgressValue(0, 10000);
 
             // update status label
-            labelStatus.Text = nbReviewsRatingsProcessed_.ToString() + " review(s) exported";
+            labelStatus.Content = nbReviewsRatingsProcessed_.ToString() + " review(s) exported";
         }
 
-        private void buttonQuit_Click(object sender, EventArgs e)
+        private void buttonQuit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
@@ -252,7 +253,7 @@ namespace PMJAReviewExporter
                             albumPage = new MJMAParseAlbumPage(sourceHTMLAbumPage);
                             break;
                     }
-                    
+
                     year = albumPage.Year;
                 }
 
@@ -277,7 +278,7 @@ namespace PMJAReviewExporter
 
             // build review text
 
-            string headerText = band.ToUpper() + " - " + album  + " (" + year + ")";
+            string headerText = band.ToUpper() + " - " + album + " (" + year + ")";
             string ratingText = rating + ((rating == "1") ? " star" : " stars");
             string reviewText = headerText + "\r\n" + ratingText + "\r\n\r\n" + text;
 
@@ -286,7 +287,7 @@ namespace PMJAReviewExporter
 
             // write into general file
 
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(allReviewsPath, true))
+            using (StreamWriter file = new StreamWriter(allReviewsPath, true))
             {
                 file.WriteLine(reviewText);
                 file.WriteLine("");
@@ -303,7 +304,7 @@ namespace PMJAReviewExporter
             albumString = Tools.RemoveWindowsForbiddenCharacters(albumString);
 
             string reviewFilename = bandString + "_" + albumString + "_" + year + ".txt"; // TODO: add year
-            string reviewPath = Path.Combine(dirReviewer, reviewFilename);
+            string reviewPath = System.IO.Path.Combine(dirReviewer, reviewFilename);
 
             File.WriteAllText(reviewPath, reviewText);
         }
@@ -334,7 +335,7 @@ namespace PMJAReviewExporter
             string reviewer = sender as string;
 
             if (!String.IsNullOrEmpty(reviewer))
-                this.Invoke(new changeReviewerNameLabel(changeReviewerNameLabelText), "(" + reviewer + ")");
+                Dispatcher.Invoke(new changeReviewerNameLabel(changeReviewerNameLabelText), "(" + reviewer + ")");
         }
 
         void FormMain_OnProcessReviewParams(object sender, EventArgs e)
@@ -346,105 +347,131 @@ namespace PMJAReviewExporter
             int percent = 100 * (index + 1) / nbTotal;
             float progress = (float)(1.0 / (nbTotal + 1));
             string text = "Exporting review " + (index + 1).ToString() + "/" + nbTotal + " (" + percent.ToString() + "%)...";
-            
-            this.Invoke(new changeProgressLabel(changeProgressLabelText), text);
-            this.Invoke(new incrementProgressBar(incrementProgressBarValue), progress);
-            this.Invoke(new incrementProgressTaskBar(incrementProgressTaskBarValue), progress);
+
+            Dispatcher.Invoke(new changeProgressLabel(changeProgressLabelText), text);
+            Dispatcher.Invoke(new incrementProgressBar(incrementProgressBarValue), progress);
+            Dispatcher.Invoke(new incrementProgressTaskBar(incrementProgressTaskBarValue), progress);
         }
 
         private void FormMain_OnProcessError(object sender, EventArgs e)
         {
             string error = sender as string;
 
-            this.Invoke(new changeProgressLabel(changeProgressLabelText), error);
+            Dispatcher.Invoke(new changeProgressLabel(changeProgressLabelText), error);
         }
 
         private void changeReviewerNameLabelText(string text)
         {
             labelReviewerName.Text = text;
-            labelReviewerName.Visible = true;
+            labelReviewerName.Visibility = Visibility.Visible;
         }
 
         private void changeProgressLabelText(string text)
         {
-            labelStatus.Text = text;
+            labelStatus.Content = text;
         }
 
         private void incrementProgressBarValue(float value)
         {
-            int increment = (int)Math.Round(progressBar1.Maximum * value);
-            progressBar1.Increment(increment);
+            int increment = (int)Math.Round(progressbar.Maximum * value);
+            progressbar.Value += increment;
         }
 
         private void incrementProgressTaskBarValue(float value)
         {
-            taskbarManagerValue_ += 10000 * value;
-            taskbarManager_.SetProgressValue((int)(taskbarManagerValue_ + 0.5), 10000);
+            //taskbarManagerValue_ += 10000 * value;
+            //taskbarManager_.SetProgressValue((int)(taskbarManagerValue_ + 0.5), 10000);
         }
 
         #endregion
 
         #region Interface functions
 
-        private void textboxReviewer_TextChanged(object sender, EventArgs e)
+        private void textboxReviewer_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            labelReviewerName.Visible = false;
-            labelStatus.Visible = false;
+            labelReviewerName.Visibility = Visibility.Hidden;
+            labelStatus.Visibility = Visibility.Hidden;
 
             updateGUI();
         }
 
-        private void textboxReviewer_Click(object sender, EventArgs e)
+
+        private void textboxReviewer_MouseUp(object sender, MouseButtonEventArgs e)
         {
             textboxReviewer.SelectAll();
         }
 
         private void textboxReviewer_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.Key == Key.Enter || e.Key == Key.Return)
                 buttonExport_Click(sender, e);
         }
 
-        private void comboboxSite_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboboxSite_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            site_ = comboboxSite.SelectedItem as string;
+            string sitePrev = site_;
+            bool siteWasProg = String.IsNullOrEmpty(sitePrev) ? false : sitePrev.ToLower().StartsWith("prog");
+
+            site_ = ((ComboBoxItem)comboboxSite.SelectedItem).Content.ToString();
             switch (site_)
             {
                 case "Prog Archives":
 
                     urlSite_ = "http://www.progarchives.com/";
-                    urlReviewer_ = "http://www.progarchives.com/Collaborators.asp?id=" + "<REVIEWER>" + "&listreviews=alpha&showall=true#reviews";;
-                    pictureboxHeader.Image = global::PMJAReviewExporter.Properties.Resources.PA_Logo;
+                    urlReviewer_ = "http://www.progarchives.com/Collaborators.asp?id=" + "<REVIEWER>" + "&listreviews=alpha&showall=true#reviews"; ;
+                    imageHeader.Source = (ImageSource)Application.Current.FindResource("PA_Logo");
 
                     labelReviewer.Text = "Reviewer ID";
-                    string tooltipText = "Enter you reviewer ID.\r\n\r\n";
-                    tooltipText += "If your reviewer page is http://www.progarchives.com/Collaborators.asp?id=11816\r\n";
-                    tooltipText += "=> your reviewer ID is 11816";
-                    tooltipTextboxReviewer.SetToolTip(textboxReviewer, tooltipText);
+                    string tooltipText = "Enter reviewer ID.\r\n\r\n";
+                    tooltipText += "If reviewer page is http://www.progarchives.com/Collaborators.asp?id=11816\r\n";
+                    tooltipText += "=> reviewer ID is 11816";
+                    textboxReviewer.ToolTip = tooltipText;
+
+                    if (!siteWasProg)
+                    {
+                        textboxReviewer.Text = String.Empty;
+                        labelReviewerName.Text = String.Empty;
+                    }
 
                     break;
 
                 case "Metal Music Archives":
-                    
+
                     urlSite_ = "http://www.metalmusicarchives.com";
                     urlReviewer_ = "http://www.metalmusicarchives.com/member/" + "<REVIEWER>" + "?reviews=all";
-                    pictureboxHeader.Image = global::PMJAReviewExporter.Properties.Resources.MMA_Logo;
+                    imageHeader.Source = (ImageSource)Application.Current.FindResource("MMA_Logo");
 
                     labelReviewer.Text = "Reviewer";
-                    tooltipTextboxReviewer.SetToolTip(textboxReviewer, "Enter you reviewer pseudo");
-                    
+                    textboxReviewer.ToolTip = "Enter reviewer pseudo";
+
+                    if (siteWasProg)
+                    {
+                        textboxReviewer.Text = String.Empty;
+                        labelReviewerName.Text = String.Empty;
+                    }
+
                     break;
 
                 case "Jazz Music Archives":
                     urlSite_ = "http://www.jazzmusicarchives.com";
                     urlReviewer_ = "http://www.jazzmusicarchives.com/member/" + "<REVIEWER>" + "?reviews=all";
-                    pictureboxHeader.Image = global::PMJAReviewExporter.Properties.Resources.JMA_Logo;
+                    imageHeader.Source = (ImageSource)Application.Current.FindResource("JMA_Logo");
 
                     labelReviewer.Text = "Reviewer";
-                    tooltipTextboxReviewer.SetToolTip(textboxReviewer, "Enter you reviewer pseudo");
-                    
+                    textboxReviewer.ToolTip = "Enter reviewer pseudo";
+
+                    if (siteWasProg)
+                    {
+                        textboxReviewer.Text = String.Empty;
+                        labelReviewerName.Text = String.Empty;
+                    }
+
                     break;
             }
+
+
+
+            labelStatus.Visibility = Visibility.Hidden;
 
             Tools.DownloadPath = site_; // site_.Replace(" ", "");
             updateGUI();
@@ -452,21 +479,21 @@ namespace PMJAReviewExporter
 
         private void updateGUI()
         {
-            buttonExport.Text = isProcessing_ ? "Abort" : "EXPORT";
+            buttonExport.Content = isProcessing_ ? "Abort" : "EXPORT";
 
-            buttonQuit.Enabled = !isProcessing_;
-            comboboxSite.Enabled = !isProcessing_;
-            textboxReviewer.Enabled = !isProcessing_;
+            buttonQuit.IsEnabled = !isProcessing_;
+            comboboxSite.IsEnabled = !isProcessing_;
+            textboxReviewer.IsEnabled = !isProcessing_;
 
             switch (site_)
             {
                 case "Prog Archives":
-                    buttonExport.Enabled = Tools.isStringNumerical(textboxReviewer.Text);
+                    buttonExport.IsEnabled = Tools.isStringNumerical(textboxReviewer.Text);
                     break;
 
                 case "Metal Music Archives":
                 case "Jazz Music Archives":
-                    buttonExport.Enabled = !String.IsNullOrEmpty(textboxReviewer.Text);
+                    buttonExport.IsEnabled = !String.IsNullOrEmpty(textboxReviewer.Text);
                     break;
             }
         }

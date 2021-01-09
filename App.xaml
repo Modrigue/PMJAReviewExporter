@@ -1,0 +1,13 @@
+﻿<Application x:Class="PMJAReviewExporter.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:PMJAReviewExporter"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <BitmapImage x:Key="PA_Logo" UriSource="PA/PA_Logo.jpg" />
+            <BitmapImage x:Key="MMA_Logo" UriSource="MJMA/MMA_Logo.jpg" />
+            <BitmapImage x:Key="JMA_Logo" UriSource="MJMA/JMA_Logo.jpg" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
