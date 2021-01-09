@@ -19,6 +19,14 @@ namespace PMJAReviewExporter
     {
         public static string DownloadPath = "";
 
+        public static void Initialize()
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3
+                | SecurityProtocolType.Tls
+                | SecurityProtocolType.Tls11
+                | SecurityProtocolType.Tls12;
+        }
+
         public static string GetWebPageSourceHTML(string url)
         {
             string sourceHTML = "";
