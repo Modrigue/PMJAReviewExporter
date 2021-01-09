@@ -50,6 +50,8 @@ namespace PMJAReviewExporter
 
             taskbarManager_ = TaskbarManager.Instance;
             taskbarManagerValue_ = 0;
+
+            Tools.Initialize();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
