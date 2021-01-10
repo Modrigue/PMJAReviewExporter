@@ -157,6 +157,7 @@ namespace PMJAReviewExporter
 
             // get reviews data
             HtmlNode nodeReviews = nodeReviewer.Descendants("ul").FirstOrDefault();
+            if (nodeReviews != null)
             foreach (HtmlNode node in nodeReviews.Descendants())
             {
                 // get rating
