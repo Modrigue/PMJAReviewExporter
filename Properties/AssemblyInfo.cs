@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PMJAReviewExporter")]
-[assembly: AssemblyCopyright("Copyright © Modrigue 2016-2021")]
+[assembly: AssemblyCopyright("Copyright © Modrigue 2016-2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
