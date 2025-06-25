@@ -21,4 +21,4 @@ jobs:
       run: nuget restore PMJAReviewExporter.sln
 
     - name: Build with MSBuild
-      run: msbuild PMJAReviewExporter.sln /p:Configuration=Release# This workflow uses actions that are not certified by GitHub.
+      run: msbuild PMJAReviewExporter.sln /p:Configuration=Release
