@@ -51,7 +51,7 @@ namespace PMJAReviewExporter
             //taskbarManager_ = TaskbarManager.Instance;
             //taskbarManagerValue_ = 0;
 
-            labelVersion.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            labelVersion.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
             Tools.Initialize();
         }
