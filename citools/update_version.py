@@ -9,7 +9,7 @@ ASSEMBLY_INFO_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'P
 GITHUB_REF = os.environ.get('GITHUB_REF', '')
 
 def get_tag_from_ref(ref):
-    # GitHub ref format: refs/tags/1.2.3
+    # GitHub ref format: refs/tags/1.2.3.4
     if ref.startswith('refs/tags/'):
         return ref[len('refs/tags/'):]
     
@@ -17,7 +17,7 @@ def get_tag_from_ref(ref):
 
 def update_assembly_version(tag):
     pattern = re.compile(r'Version\(".*"\)')
-    replacement = f'Version("{tag}.*")'
+    replacement = f'Version("{tag}")'
 
     with open(ASSEMBLY_INFO_PATH, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -27,7 +27,7 @@ def update_assembly_version(tag):
     if count > 0 and new_content != content:
         with open(ASSEMBLY_INFO_PATH, 'w', encoding='utf-8') as f:
             f.write(new_content)
-        print(f"Updated AssemblyVersion to {tag}.*")
+        print(f"Updated AssemblyVersion to {tag}")
 
 def main():
     tag = get_tag_from_ref(GITHUB_REF)
