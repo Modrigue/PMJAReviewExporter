@@ -313,21 +313,18 @@ namespace PMJAReviewExporter
 
         private void sendProcessReviewerName(string reviewer)
         {
-            if (OnProcessReviewerName != null)
-                OnProcessReviewerName(reviewer, null);
+            OnProcessReviewerName?.Invoke(reviewer, null);
         }
 
         private void sendProcessReviewParams(int index, int nbTotal)
         {
             Tuple<int, int> values = Tuple.Create(index, nbTotal);
-            if (OnProcessReviewParams != null)
-                OnProcessReviewParams(values, null);
+            OnProcessReviewParams?.Invoke(values, null);
         }
 
         private void sendProcessError(string text)
         {
-            if (OnProcessError != null)
-                OnProcessError(text, null);
+            OnProcessError?.Invoke(text, null);
         }
 
         void FormMain_OnProcessReviewerName(object sender, EventArgs e)
@@ -410,7 +407,7 @@ namespace PMJAReviewExporter
         private void comboboxSite_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             string sitePrev = site_;
-            bool siteWasProg = String.IsNullOrEmpty(sitePrev) ? false : sitePrev.ToLower().StartsWith("prog");
+            bool siteWasProg = !String.IsNullOrEmpty(sitePrev) && sitePrev.ToLower().StartsWith("prog");
 
             site_ = ((ComboBoxItem)comboboxSite.SelectedItem).Content.ToString();
             switch (site_)
