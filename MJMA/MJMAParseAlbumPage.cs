@@ -7,10 +7,10 @@ namespace PMJAReviewExporter
 {
     public class MJMAParseAlbumPage : ParseAlbumPage
     {
-        string year_;
+        readonly string year_;
 
         // parse objects
-        HtmlAgilityPack.HtmlDocument htmlDoc_;
+        readonly HtmlAgilityPack.HtmlDocument htmlDoc_;
         HtmlNode nodeMid_;
 
         public override String Year

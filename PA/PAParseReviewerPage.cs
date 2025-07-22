@@ -10,7 +10,7 @@ namespace PMJAReviewExporter
     {
         string nameReviewer_;
         int nbReviewsRatings_;
-        string avatarURL_;
+        readonly string avatarURL_;
         List<string> reviewBands_;
         List<string> reviewAlbums_;
         List<string> reviewURLs_;
@@ -18,7 +18,7 @@ namespace PMJAReviewExporter
         List<string> ratings_;
 
         // parse objects
-        HtmlAgilityPack.HtmlDocument htmlDoc_;
+        readonly HtmlAgilityPack.HtmlDocument htmlDoc_;
 
         public override String NameReviewer
         {

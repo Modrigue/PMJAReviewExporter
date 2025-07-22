@@ -19,9 +19,9 @@ namespace PMJAReviewExporter
         List<string> reviewURLs_;
         List<string> albumsURLs_;
         List<string> ratings_;
-        
+
         // parse objects
-        HtmlAgilityPack.HtmlDocument htmlDoc_;
+        readonly HtmlAgilityPack.HtmlDocument htmlDoc_;
 
         public override String NameReviewer
         {
@@ -94,7 +94,6 @@ namespace PMJAReviewExporter
 
         private void computeReviewerData()
         {
-            string nameReviewer = "";
             string avatarURL = "";
             List<string> favoriteBands = new List<string>();
 
@@ -111,14 +110,14 @@ namespace PMJAReviewExporter
             HtmlNode node4 = Tools.NodeWithAttributeAndValue(node3, "div", "class", "colmid");
             HtmlNode node5 = Tools.NodeWithAttributeAndValue(node4, "div", "class", "colleft");
             HtmlNode node6 = Tools.NodeWithAttributeAndValue(node5, "div", "class", "col1wrap");
-            HtmlNode nodeMid = Tools.NodeWithAttributeAndValue(node6, "div", "class", "col1");
+            //HtmlNode nodeMid = Tools.NodeWithAttributeAndValue(node6, "div", "class", "col1");
 
             HtmlNode nodeProfilePage = Tools.NodeWithAttributeAndValue(node6, "div", "id", "profilePage");
             HtmlNode nodeProfileContainer = Tools.NodeWithAttributeAndValue(node6, "div", "id", "profileContainer");
 
             // get reviewer name node
             HtmlNode nodeReviewerName = nodeProfilePage.Descendants("h1").FirstOrDefault();
-            nameReviewer = Tools.CleanString(nodeReviewerName.InnerText);
+            string nameReviewer = Tools.CleanString(nodeReviewerName.InnerText);
 
             // get reviewer avatar URL
             HtmlNode nodeProfileAvatar = Tools.NodeWithAttributeAndValue(nodeProfileContainer, "div", "id", "profileAvatar");

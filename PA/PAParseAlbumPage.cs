@@ -7,10 +7,10 @@ namespace PMJAReviewExporter
 {
     public class PAParseAlbumPage : ParseAlbumPage
     {
-        string year_;
+        readonly string year_;
 
         // parse objects
-        HtmlAgilityPack.HtmlDocument htmlDoc_;
+        readonly HtmlAgilityPack.HtmlDocument htmlDoc_;
 
         public override String Year
         {
@@ -73,7 +73,7 @@ namespace PMJAReviewExporter
             HtmlNode node7 = node6.Descendants("tr").FirstOrDefault();
             List<HtmlNode> nodeList = Tools.NodeListWithAttributeAndValue(node7, "td", "valign", "top");
 
-            foreach (HtmlNode node in nodeList)
+            for (int i = 0; i < nodeList.Count; i++)
             {
                 HtmlNode nodeYear = node6.Descendants("strong").FirstOrDefault();
                 if (nodeYear == null) continue;

@@ -8,7 +8,7 @@ namespace PMJAReviewExporter
     public class PAParseReviewPage : ParseReviewPage
     {
         // review info
-        string reviewText_;
+        readonly string reviewText_;
 
         public override string ReviewText
         {
@@ -16,7 +16,7 @@ namespace PMJAReviewExporter
         }
 
         // parse objects
-        HtmlAgilityPack.HtmlDocument htmlDoc_;
+        readonly HtmlAgilityPack.HtmlDocument htmlDoc_;
 
         public PAParseReviewPage(string sourceHTML)
         {

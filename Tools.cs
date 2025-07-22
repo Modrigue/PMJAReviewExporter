@@ -125,9 +125,7 @@ namespace PMJAReviewExporter
             if (String.IsNullOrEmpty(text))
                 return false;
 
-            long myInt;
-            bool isNumerical = long.TryParse(text, out myInt);
-
+            bool isNumerical = long.TryParse(text, out _);
             return isNumerical;
         }
 

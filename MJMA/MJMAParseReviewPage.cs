@@ -8,8 +8,8 @@ namespace PMJAReviewExporter
     public class MJMAParseReviewPage : ParseReviewPage
     {
         // review info
-        string reviewText_;
-        string year_;
+        readonly string reviewText_;
+        readonly string year_;
 
         public override string ReviewText
         {
@@ -22,7 +22,7 @@ namespace PMJAReviewExporter
         }
 
         // parse objects
-        HtmlAgilityPack.HtmlDocument htmlDoc_;
+        readonly HtmlAgilityPack.HtmlDocument htmlDoc_;
         HtmlNode nodeMid_;
 
         public MJMAParseReviewPage(string sourceHTML)
